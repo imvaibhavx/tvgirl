@@ -1,0 +1,12 @@
+services:
+  warehouse:
+    image: postgres:16
+    container_name: reviews_db
+    env_file: .env
+    ports:
+      - "5433:5432"   # 5433 on your PC, so it won't clash with a local Postgres or Airflow's own DB later
+    volumes:
+      - warehouse_data:/var/lib/postgresql/data
+
+volumes:
+  warehouse_data:
