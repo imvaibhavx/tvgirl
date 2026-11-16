@@ -10,7 +10,7 @@ from src.ingestion.steam import GAMES
 
 load_dotenv()
 
-RAW_DIR = Path("data/raw")
+RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw"
 
 DDL = """
 CREATE TABLE IF NOT EXISTS reviews (
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 def connect():
     return psycopg2.connect(
-        host="localhost",
-        port=5433,  # host port from docker-compose
+        host=os.getenv("WAREHOUSE_HOST", "localhost"),
+        port=int(os.getenv("WAREHOUSE_PORT", 5433)),
         user=os.getenv("POSTGRES_USER"),
         password=os.getenv("POSTGRES_PASSWORD"),
         dbname=os.getenv("POSTGRES_DB"),

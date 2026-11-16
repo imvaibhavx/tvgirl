@@ -1,10 +1,30 @@
 services:
+  airflow:
+    image: apache/airflow:2.10.5
+    container_name: airflow
+    command: standalone
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      _PIP_ADDITIONAL_REQUIREMENTS: "requests python-dotenv psycopg2-binary"
+      WAREHOUSE_HOST: warehouse
+      WAREHOUSE_PORT: "5432"
+      PYTHONPATH: /opt/airflow
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./src:/opt/airflow/src
+      - ./data:/opt/airflow/data
+    depends_on:
+      - warehouse
+
   warehouse:
     image: postgres:16
     container_name: reviews_db
     env_file: .env
     ports:
-      - "5433:5432"   # 5433 on your PC, so it won't clash with a local Postgres or Airflow's own DB later
+      - "5433:5432" # 5433 on your PC, so it won't clash with a local Postgres or Airflow's own DB later
     volumes:
       - warehouse_data:/var/lib/postgresql/data
 

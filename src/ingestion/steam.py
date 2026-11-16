@@ -5,7 +5,7 @@ from pathlib import Path
 import requests
 
 URL = "https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/"
-RAW_DIR = Path("data/raw")
+RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw"
 
 GAMES = {
     1086940: "Baldur's Gate 3",
@@ -66,6 +66,11 @@ def save(appid, rows):
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     return path
 
+def ingest_all():
+    for appid, name in GAMES.items():
+        rows = fetch_reviews(appid)
+        path = save(appid, rows)
+        print(f"{name}: kept {len(rows)} reviews -> {path}")
 
 if __name__ == "__main__":
     for appid, name in GAMES.items():
